@@ -1,3 +1,4 @@
+# Imports at the top
 import seaborn as sns
 from faicons import icon_svg
 
@@ -5,12 +6,14 @@ from shiny import reactive
 from shiny.express import input, render, ui
 import palmerpenguins 
 
+# Load penguin dataset
 df = palmerpenguins.load_penguins()
 
-ui.page_opts(title="Penguins dashboard", fillable=True)
+# Set page options
+ui.page_opts(title="Craig's Penguin Dashboard", fillable=True)
 
-
-with ui.sidebar(title="Filter controls"):
+# Sidebar: User filters and links
+with ui.sidebar(title="Filter choices"):
     ui.input_slider("mass", "Mass", 2000, 6000, 6000)
     ui.input_checkbox_group(
         "species",
@@ -47,10 +50,10 @@ with ui.sidebar(title="Filter controls"):
         target="_blank",
     )
 
-
+# Summary value boxes
 with ui.layout_column_wrap(fill=False):
     with ui.value_box(showcase=icon_svg("earlybirds")):
-        "Number of penguins"
+        "Penguin Friends"
 
         @render.text
         def count():
@@ -70,10 +73,10 @@ with ui.layout_column_wrap(fill=False):
         def bill_depth():
             return f"{filtered_df()['bill_depth_mm'].mean():.1f} mm"
 
-
+# Visualizations
 with ui.layout_columns():
     with ui.card(full_screen=True):
-        ui.card_header("Bill length and depth")
+        ui.card_header("Scatterplot of bill length and depth")
 
         @render.plot
         def length_depth():
@@ -85,7 +88,7 @@ with ui.layout_columns():
             )
 
     with ui.card(full_screen=True):
-        ui.card_header("Penguin da")
+        ui.card_header("Penguin Data")
 
         @render.data_frame
         def summary_statistics():
@@ -101,7 +104,7 @@ with ui.layout_columns():
 
 #ui.include_css(app_dir / "styles.css")
 
-
+# Reactive filtering logic
 @reactive.calc
 def filtered_df():
     filt_df = df[df["species"].isin(input.species())]
